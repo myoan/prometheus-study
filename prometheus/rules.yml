@@ -1,0 +1,5 @@
+groups:
+  - name: dice_group
+    rules:
+    - record: le_env_side:dice_result:50pile_sum_rate1m
+      expr: sum(rate(dice[1m])) by (le, env, side)
