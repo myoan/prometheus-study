@@ -3,3 +3,5 @@ groups:
     rules:
     - record: le_env_side:dice_result:50pile_sum_rate1m
       expr: sum(rate(dice[1m])) by (le, env, side)
+    - record: le_env_side:dice_hist:50pile_sum_rate1m
+      expr: histogram_quantile(0.50, sum(rate(dice_histogram_bucket[1m])) by (le, env, side))

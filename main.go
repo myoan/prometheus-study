@@ -19,15 +19,31 @@ var (
 		Name: "dice",
 		Help: "gauge sample",
 	}, []string{"env", "side"})
+	diceHistogramVec = prometheus.NewHistogramVec(prometheus.HistogramOpts{
+		Name: "dice_histogram",
+		Help: "histogram sample",
+		Buckets: []float64{
+			5,
+			10,
+			15,
+			20,
+			25,
+		},
+	}, []string{"env", "side"})
 )
 
 func DiceGauge(env string, side int, ret float64) {
 	diceGaugeVec.WithLabelValues(env, fmt.Sprintf("%d", side)).Set(ret)
 }
 
+func DiceHistogram(env string, side int, ret float64) {
+	diceHistogramVec.WithLabelValues(env, fmt.Sprintf("%d", side)).Observe(ret)
+}
+
 func init() {
 	prometheus.MustRegister(counter)
 	prometheus.MustRegister(diceGaugeVec)
+	prometheus.MustRegister(diceHistogramVec)
 }
 
 func diceRoll() {
@@ -38,6 +54,7 @@ func diceRoll() {
 		for _, side := range sides {
 			ret := rand.Intn(side)
 			DiceGauge(env, side, float64(ret))
+			DiceHistogram(env, side, float64(ret))
 		}
 	}
 }
